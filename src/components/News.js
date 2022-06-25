@@ -1,42 +1,55 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import NewsItems from "./NewsItems";
+import axios from "axios";
 
 const News = () => {
-  const [data, setData] = useState("");
+  const [info, setInfo] = useState([]);
+  const BASE_URL = `https://newsapi.org/v2/top-headlines?country=au&apiKey=830d42bd889249a3bf03cb2bf690b5df&page=1`;
 
-  const getData = async () => {
-    axios
-      .get(
-        "https://newsapi.org/v2/top-headlines?country=us&apiKey=830d42bd889249a3bf03cb2bf690b5df"
-      )
-      .then((result) => {
-        const response = result.data;
-        setData(response);
-      });
+  const fetchData = async () => {
+    await axios.get(BASE_URL).then((res) => {
+      console.log(res.data.articles);
+      setInfo(res.data.articles);
+    });
   };
-  console.log(data);
 
   useEffect(() => {
-    getData();
-  }, []);
+   fetchData()
+  },[]);
+
+  const handlePreiousClick =async()=>{
+    console.log('previous')
+    // await axios.get(BASE_URL)
+
+  }
+  const handleNextClick =()=>{
+    console.log('next')
+  }
 
   return (
     <div className="container my-3">
       <h2>NEWS-Top Headlines</h2>
       <div className="row">
-        {data.map((element) => {
+        {info.map((element) => {
           return (
-            <div className="col-md-4" key={element.url}>
+            <div className="col-md-4 " key={element.url}>
               <NewsItems
-                title={element.title ? element.title : ""}
-                description={element.description ? element.description : ""}
+                title={element.title}
+                description={element.description}
                 imgUrl={element.urlToImage}
                 newsUrl={element.url}
               />
             </div>
           );
         })}
+      </div>
+      <div className="container d-flex justify-content-between">
+        <button type="button" className="btn btn-primary" onClick={handlePreiousClick}>
+          &larr; Previous
+        </button>
+        <button type="button" className="btn btn-primary" onClick={handleNextClick}>
+          Next &rarr;
+        </button>
       </div>
     </div>
   );
